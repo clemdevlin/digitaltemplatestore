@@ -13,14 +13,17 @@ const SuccessPage = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (reference) {
-      // Simulate backend verification
-      setTimeout(() => {
-        const verifiedTx = verifyTransaction(reference);
-        setTransaction(verifiedTx);
-        setLoading(false);
-      }, 1500);
+    const handleVerification = async () => {
+        if (reference) {
+            // Simulate backend verification delay, then call Supabase
+            setTimeout(async () => {
+                const verifiedTx = await verifyTransaction(reference);
+                setTransaction(verifiedTx);
+                setLoading(false);
+            }, 1500);
+        }
     }
+    handleVerification();
   }, [reference, verifyTransaction]);
 
   return (
@@ -43,7 +46,7 @@ const SuccessPage = () => {
               <CheckCircle className="h-16 w-16 text-green-500" />
               <p className="text-muted-foreground">Your template is ready for download.</p>
               <Button asChild size="lg" className="w-full">
-                <Link to={`/download/${transaction.downloadToken}`}>
+                <Link to={`/download/${transaction.download_token}`}>
                   <Download className="mr-2 h-4 w-4" />
                   Download Now
                 </Link>

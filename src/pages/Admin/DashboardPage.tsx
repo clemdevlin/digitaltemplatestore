@@ -3,10 +3,10 @@ import { useAppContext } from '@/context/AppContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { PlusCircle, Trash2 } from 'lucide-react';
+import { PlusCircle, Trash2, Loader } from 'lucide-react';
 
 const AdminDashboardPage = () => {
-  const { products, deleteProduct } = useAppContext();
+  const { products, deleteProduct, loading } = useAppContext();
 
   return (
     <div className="container py-12">
@@ -21,10 +21,14 @@ const AdminDashboardPage = () => {
       </div>
 
       <div className="space-y-4">
-        {products.length > 0 ? products.map(product => (
+        {loading ? (
+            <div className="flex justify-center items-center py-16">
+                <Loader className="h-12 w-12 animate-spin text-primary" />
+            </div>
+        ) : products.length > 0 ? products.map(product => (
           <Card key={product.id} className="flex items-center">
             <CardHeader>
-              <img src={product.thumbnailUrl} alt={product.title} className="w-24 h-16 object-cover rounded-md" />
+              <img src={product.thumbnail_url || 'https://img-wrapper.vercel.app/image?url=https://placehold.co/96x64.png'} alt={product.title} className="w-24 h-16 object-cover rounded-md" />
             </CardHeader>
             <CardContent className="flex-grow p-4">
               <CardTitle className="text-lg">{product.title}</CardTitle>

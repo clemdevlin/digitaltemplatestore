@@ -18,7 +18,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
             <Card className="overflow-hidden h-full flex flex-col">
                 <CardHeader className="p-0">
                     <img 
-                        src={product.thumbnailUrl} 
+                        src={product.thumbnail_url || 'https://img-wrapper.vercel.app/image?url=https://placehold.co/400x300.png'} 
                         alt={product.title} 
                         className="object-cover w-full h-48"
                     />

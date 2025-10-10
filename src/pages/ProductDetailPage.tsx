@@ -24,9 +24,9 @@ const ProductDetailPage = () => {
 
   const initializePayment = usePaystackPayment(config);
 
-  const onSuccess = (reference: any) => {
+  const onSuccess = async (reference: any) => {
     if (product) {
-      createTransaction({
+      await createTransaction({
         email: config.email,
         productId: product.id,
         reference: reference.reference,
@@ -52,7 +52,7 @@ const ProductDetailPage = () => {
       <div className="grid md:grid-cols-2 gap-12 items-start">
         <div>
           <img 
-            src={product.thumbnailUrl} 
+            src={product.thumbnail_url || 'https://img-wrapper.vercel.app/image?url=https://placehold.co/600x400.png'} 
             alt={product.title}
             className="w-full rounded-lg shadow-lg object-cover aspect-video"
           />
@@ -68,7 +68,7 @@ const ProductDetailPage = () => {
               size="lg" 
               className="w-full"
               onClick={() => {
-                if(paystackKey && paystackKey !== "YOUR_PAYSTACK_PUBLIC_KEY") {
+                if(paystackKey && !paystackKey.includes("YOUR_")) {
                     initializePayment({onSuccess, onClose});
                 } else {
                     alert("Paystack public key not configured. Please add it to your .env file.");

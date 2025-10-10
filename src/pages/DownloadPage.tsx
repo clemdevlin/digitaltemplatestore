@@ -1,34 +1,50 @@
 import { useParams, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { FileDown, ShieldX } from 'lucide-react';
+import { FileDown, ShieldX, Loader } from 'lucide-react';
 import { useAppContext } from '@/context/AppContext';
 import { useEffect, useState } from 'react';
 
 const DownloadPage = () => {
     const { token } = useParams<{ token: string }>();
-    const { transactions, getProductById } = useAppContext();
+    const { getTransactionByToken, getSignedUrl } = useAppContext();
     const [isValid, setIsValid] = useState<boolean | null>(null);
-    const [fileUrl, setFileUrl] = useState<string>('');
+    const [downloadUrl, setDownloadUrl] = useState<string>('');
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // Simulate token validation
-        const tx = transactions.find(t => t.downloadToken === token && t.verified);
-        if (tx) {
-            const product = getProductById(tx.productId);
-            if (product) {
-                setIsValid(true);
-                setFileUrl(product.fileUrl);
+        const validateToken = async () => {
+            if (!token) {
+                setIsValid(false);
+                setLoading(false);
+                return;
+            }
+
+            const { transaction, product } = await getTransactionByToken(token);
+
+            if (transaction?.verified && product?.file_path) {
+                const url = await getSignedUrl(product.file_path);
+                if (url) {
+                    setDownloadUrl(url);
+                    setIsValid(true);
+                } else {
+                    setIsValid(false);
+                }
             } else {
                 setIsValid(false);
             }
-        } else {
-            setIsValid(false);
-        }
-    }, [token, transactions, getProductById]);
+            setLoading(false);
+        };
 
-    if (isValid === null) {
-        return <div>Loading...</div>; // Or a spinner
+        validateToken();
+    }, [token, getTransactionByToken, getSignedUrl]);
+
+    if (loading) {
+        return (
+            <div className="container flex items-center justify-center py-24">
+                <Loader className="h-12 w-12 animate-spin text-primary" />
+            </div>
+        );
     }
 
     return (
@@ -43,18 +59,17 @@ const DownloadPage = () => {
                     {isValid ? (
                         <div className="flex flex-col items-center gap-6">
                             <FileDown className="h-16 w-16 text-primary" />
-                            <p className="text-muted-foreground">Click the button below to download your file.</p>
+                            <p className="text-muted-foreground">Click the button below to download your file. The link is valid for 60 seconds.</p>
                             <Button asChild size="lg" className="w-full">
-                                <a href={fileUrl} download target="_blank" rel="noopener noreferrer">
+                                <a href={downloadUrl} download>
                                     Download File
                                 </a>
                             </Button>
-                            <p className="text-xs text-muted-foreground">This link is for single use.</p>
                         </div>
                     ) : (
                         <div className="flex flex-col items-center gap-6">
                             <ShieldX className="h-16 w-16 text-destructive" />
-                            <p className="text-muted-foreground">This download link is not valid. Please check the link or contact support.</p>
+                            <p className="text-muted-foreground">This download link is not valid. It may have been used already or expired.</p>
                             <Button asChild variant="outline">
                                 <Link to="/">Return to Store</Link>
                             </Button>
