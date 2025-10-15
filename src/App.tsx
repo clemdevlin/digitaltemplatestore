@@ -10,6 +10,7 @@ import NotFoundPage from '@/pages/NotFoundPage';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import AdminLoginPage from '@/pages/Admin/LoginPage';
 
+
 function App() {
   return (
     <BrowserRouter>
@@ -29,6 +30,17 @@ function App() {
           <Route path="*" element={<NotFoundPage />} />
         </Route>
       </Routes>
+      {/* <Toaster
+        position="top-center"
+        reverseOrder={false}
+        toastOptions={{
+          className: '',
+          style: {
+            background: '#333',
+            color: '#fff',
+          },
+        }}
+      /> */}
     </BrowserRouter>
   );
 }

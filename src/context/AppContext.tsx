@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext, ReactNode, useEffect, useCallback } from 'react';
+import { createContext, useState, useContext, ReactNode, useEffect, useCallback } from 'react';
 import { Product, Transaction, NewProduct } from '@/types';
 import { supabase } from '@/lib/supabaseClient';
 import { Session, AuthError } from '@supabase/supabase-js';
@@ -34,6 +34,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   const fetchProducts = useCallback(async () => {
     setLoading(true);
     const { data, error } = await supabase.from('products').select('*').order('created_at', { ascending: false });
+    
     if (error) {
       console.error('Error fetching products:', error);
     } else {
@@ -151,7 +152,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     const { data: product, error: pError } = await supabase
         .from('products')
         .select('*')
-        .eq('id', transaction.product_id)
+        .eq('id', transaction.product_id as string)
         .single();
     
     if (pError || !product) {
@@ -162,7 +163,8 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   }
 
   const getSignedUrl = async (filePath: string) => {
-    const { data, error } = await supabase.storage.from('templates').createSignedUrl(filePath, 60); // 60 seconds validity
+    console.log("Generating signed URL for:", filePath);
+    const { data, error } = await supabase.storage.from('templates').createSignedUrl(filePath, 300); // 60 seconds validity
     if (error) {
         console.error("Error creating signed URL", error);
         return null;

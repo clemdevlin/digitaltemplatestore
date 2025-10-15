@@ -61,7 +61,7 @@ const DownloadPage = () => {
                             <FileDown className="h-16 w-16 text-primary" />
                             <p className="text-muted-foreground">Click the button below to download your file. The link is valid for 60 seconds.</p>
                             <Button asChild size="lg" className="w-full">
-                                <a href={downloadUrl} download>
+                                <a href={downloadUrl} target='_blank' download>
                                     Download File
                                 </a>
                             </Button>

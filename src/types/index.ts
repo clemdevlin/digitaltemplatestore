@@ -5,17 +5,17 @@ export interface Product {
   price: number;
   thumbnail_url: string | null;
   file_path: string | null;
-  created_at: string;
+  created_at: string | null;
 }
 
 export interface Transaction {
   id: string;
   email: string;
-  product_id: string;
+  product_id: string | null;
   reference: string;
-  verified: boolean;
+  verified: boolean | null;
   download_token: string | null;
-  created_at: string;
+  created_at: string | null;
 }
 
 export type NewProduct = Omit<Product, 'id' | 'created_at' | 'thumbnail_url' | 'file_path'> & {
